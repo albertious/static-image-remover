@@ -15,7 +15,7 @@ if not os.path.exists(temp_dir):
     os.makedirs(temp_dir)
 
 # Load the reference image in grayscale and resize it
-reference_image_path = 'offine.png'
+reference_image_path = 'reference.png'
 reference_image = cv2.imread(reference_image_path, cv2.IMREAD_GRAYSCALE)
 
 if reference_image is None:
@@ -39,9 +39,9 @@ def process_frame(frame):
         return frame  # Return the frame to be kept
 
 # Set input and output videos
-input_file = 'stream.webm'
+input_file = 'input.mp4'
 temp_video_file = os.path.join(temp_dir, 'temp_video.mp4')
-final_output_file = 'stream_trimmed.mp4'
+final_output_file = 'input_trimmed.mp4'
 
 cap = cv2.VideoCapture(input_file)
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
