@@ -1,92 +1,87 @@
-Use a still image (e.g. reference.png) to visually compare to each frame of a video (e.g. input.mp4).
-If the png matches the current frame the video frame is deleted. If they do not match, the video frame is kept.
-
 # Video Frame Removal and Compression Script
 
-This Python script is designed to process a video by removing frames that match a specified reference image. The script then compresses the output into manageable chunks, and finally concatenates these chunks into a single video file. This approach is particularly useful for handling large video files that need to be processed efficiently.
+This Python script processes a video by removing frames that match a specified reference image and then compresses the resulting video. The script supports GPU acceleration for compression if an NVIDIA or AMD GPU is available, falling back to CPU-based compression otherwise.
 
-## How It Works
+## Features
 
-1. **Load Reference Image:**
-   - The script loads a reference image (`reference.png`) in grayscale, which is used to identify and remove matching frames from the input video.
-   - The reference image is resized to improve processing performance.
+- **Frame Removal:** Removes frames from the video that match a reference image using template matching.
+- **GPU Acceleration:** Utilizes GPU acceleration for compression if an appropriate GPU is detected.
+- **Batch Processing:** Handles video frames in batches to optimize performance.
 
-2. **Frame Processing:**
-   - Each frame of the input video (`input.mp4`) is compared to the reference image using template matching.
-   - Frames that match the reference image are removed, while others are retained.
+## Installation
 
-3. **Chunked Video Writing:**
-   - The video is processed in 1GB chunks to avoid excessive memory usage.
-   - Once a chunk reaches 1GB, it is saved and compressed using `ffmpeg`.
+1. **Install Required Python Libraries:**
+   Ensure you have Python 3.x installed and then install the required libraries using `pip`:
+   ```bash
+   pip install opencv-python-headless numpy
 
-4. **Video Compression:**
-   - Each 1GB chunk is compressed using `ffmpeg` with a preset configuration (`ultrafast` preset and 3M bitrate) to reduce the file size.
+2. **Install FFMPEG:**
 
-5. **Concatenation:**
-   - All compressed chunks are concatenated into a single output file (`input_trimmed.mp4`) using `ffmpeg`.
+Make sure ffmpeg is installed on your system. You can download it from FFMPEG's official website or install it using a package manager.
 
-6. **Clean Up:**
-   - Temporary and compressed files are deleted after the final video is created to free up disk space.
+3. **Place Your Files:**
 
-## Installation and  Prerequisites
+    Save the reference image as reference.png in the same directory as the script.
+    Place your input video file as input.mp4 in the same directory.
 
-The following Python libraries are required to run the script:
-
-1. **OpenCV (`cv2`)**: This library is used for video processing and manipulation.
-   - Install with: `pip install opencv-python`
-
-2. **NumPy (`numpy`)**: This library is used for numerical operations and array handling.
-   - Install with: `pip install numpy`
-
-3. **Concurrent Futures (`concurrent.futures`)**: This library is used for parallel execution of tasks.
-   - Included in Python's standard library (Python 3.2+). No separate installation is needed.
-
-4. **Subprocess (`subprocess`)**: This library is used for running system commands.
-   - Included in Python's standard library. No separate installation is needed.
-
-5. **OS (`os`)**: This library is used for interacting with the operating system, such as file operations.
-   - Included in Python's standard library. No separate installation is needed.
-
-6. **Temporary (`tempfile`)**: This library is used for creating temporary files and directories.
-   - Included in Python's standard library. No separate installation is needed.
-
-Ensure you have Python 3.x installed on your system, as some libraries might not be compatible with Python 2.x.
-
-
-7. **Set Up the Directory:**
-   - Place the reference image (`reference.png`) and the input video file (`input.mp4`) in the same directory as the script.
 
 ## Usage
 
-1. **Run the Script:**
-   - Execute the script using Python:
-     ```bash
-     python video_processing_script.py
-     ```
-   - Replace `video_processing_script.py` with the actual name of your script file.
+    Run the Script:
 
-2. **Output:**
-   - The processed video will be saved as `input_trimmed.mp4` in the same directory.
+    Execute the script using Python:
+
+   ```bash
+   python3 rename_the_script_file_in_a_name_you_like.py
+
+Output Files:
+
+    Intermediate video: temp_video.mp4 (saved in the temp_files directory)
+    Final processed video: input_trimmed.mp4
+
+## How It Works
+
+    **Setup and Reference Image Loading:**
+        Creates a directory for temporary files if it doesn't exist.
+        Loads and resizes the reference image to speed up processing.
+
+    **Frame Processing:**
+        Each frame of the video is compared to the reference image.
+        Frames that match the reference image are removed.
+        Non-matching frames are written to a temporary video file in batches.
+
+   **Video Compression:**
+        Detects available GPU hardware (NVIDIA or AMD) to use hardware-accelerated video encoding.
+        Uses ffmpeg to compress the temporary video file into the final output video.
+        If no GPU is available, falls back to CPU-based compression.
+
+   ** Resource Cleanup:**
+        Intermediate files and resources are cleaned up after processing.
 
 ## Customization
 
-- **Resize Factor:**
-  - Adjust the `resize_factor` to change the size of the reference image during template matching. A higher value increases accuracy but slows down processing.
+    **Reference Image Resize Factor:**
 
-- **Batch Size:**
-  - The `batch_size` determines how many frames are buffered before writing them to the video file. Adjust this value for performance tuning.
+    Adjust resize_factor to change the size of the reference image for template matching. A lower factor speeds up processing but may reduce accuracy.
 
-- **Multithreading:**
-  - The script uses a `ThreadPoolExecutor` with 8 threads by default. You can adjust the number of threads (`max_workers`) based on your system’s capabilities.
+    **Compression Settings:**
 
-- **FFMPEG Compression Settings:**
-  - Modify the `-b:v` and `-preset` options in the `ffmpeg_command` list to change the video compression quality and speed.
+    Modify the -b:v option in the ffmpeg_command to change the video bitrate. Adjust -r to set the desired frame rate.
+
+    **GPU Detection:**
+
+    The detect_gpu function identifies the available GPU and selects the appropriate codec. You can modify this function to add support for other GPUs or codecs.
+
+## Troubleshooting
+
+    **Reference Image Not Found:**
+
+    Ensure reference.png is in the same directory as the script and is a valid image file.
+
+    **FFMPEG Errors:**
+
+    Verify that ffmpeg is installed and accessible from your system's PATH.
 
 ## License
 
-This script is open-source. Use it freely, but at your own risk. 
-
-## Other
-
-I don't have time to do support. Sorry in advance.
-
+This script is provided "as-is" without any warranties. Use at your own risk.
