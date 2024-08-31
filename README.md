@@ -15,14 +15,6 @@ This Python script processes a video by removing frames that match a specified r
    ```bash
    pip3 install opencv-python-headless numpy
 
-### Installation
-
-To install the required dependencies, you can use pip. Run the following command to install the necessary Python packages:
-
-```bash
-pip install opencv-python numpy
-
-
 2. **Install FFMPEG:**
 
 Make sure ffmpeg is installed on your system. You can download it from FFMPEG's official website or install it using a package manager.
