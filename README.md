@@ -15,8 +15,9 @@ This Python script processes a video by removing frames that match a specified r
    ```bash
    pip3 install opencv-python-headless numpy
 **or**
-   ```bash
-   pip3 install opencv-python numpy
+```bash
+pip3 install opencv-python numpy
+
 
 2. **Install FFMPEG:**
 
