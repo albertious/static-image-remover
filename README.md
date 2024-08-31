@@ -62,14 +62,18 @@ Intermediate files and resources are cleaned up after processing.
 
 **Reference Image Resize Factor:**
 Adjust resize_factor to change the size of the reference image for template matching. A lower factor speeds up processing but may reduce accuracy.
+
 **Compression Settings:**
 Modify the -b:v option in the ffmpeg_command to change the video bitrate. Adjust -r to set the desired frame rate.
+
 **GPU Detection:**
 The detect_gpu function identifies the available GPU and selects the appropriate codec. You can modify this function to add support for other GPUs or codecs.
 
 ## Troubleshooting
+
 **Reference Image Not Found:**
 Ensure reference.png is in the same directory as the script and is a valid image file.
+
 **FFMPEG Errors:**
 Verify that ffmpeg is installed and accessible from your system's PATH.
 
