@@ -4,7 +4,7 @@ import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor
 import subprocess
 import os
-import tempfile
+import sys
 
 # Define the directory for temporary files
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,8 +21,8 @@ reference_image = cv2.imread(reference_image_path, cv2.IMREAD_GRAYSCALE)
 if reference_image is None:
     raise FileNotFoundError(f"Reference image at {reference_image_path} not found or unable to load.")
 
-# Resize reference images as they are compared to each other to improve performance, if needed. 0.075 is very low and processes fast but increase up to 1.0 this if you want more accuracy.
-resize_factor = 0.075
+# Resize reference images as they are compared to each other to improve performance, if needed.
+resize_factor = 0.05
 reference_image = cv2.resize(reference_image, (0, 0), fx=resize_factor, fy=resize_factor)
 
 def images_are_similar(frame, reference, threshold=0.9):
@@ -38,12 +38,13 @@ def process_frame(frame):
     else:
         return frame  # Return the frame to be kept
 
+# Set input and output videos
 input_file = 'input.mp4'
-final_output_file = 'input_trimmed.mp4'
+final_output_file = 'output_trimmed.mp4'
 temp_files = []
 temp_file_prefix = 'temp_output_'
 temp_file_suffix = '.mp4'
-max_temp_file_size = 1 * 1024 * 1024 * 1024  # Dealing with the process in 1GB chunks to avoid massive temp files building up.
+max_temp_file_size = 6 * 1024 * 1024 * 1024  # 6GB chunk size
 file_counter = 1  # Counter for sequential filenames
 
 cap = cv2.VideoCapture(input_file)
@@ -58,7 +59,8 @@ def create_temp_file():
     return temp_file_name
 
 current_temp_file = create_temp_file()
-fourcc = cv2.VideoWriter_fourcc(*'X264')
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+fps = 30  # Frames per second
 video_writer = cv2.VideoWriter(current_temp_file, fourcc, fps, (frame_width, frame_height))
 
 processed_frames = 0
@@ -68,6 +70,7 @@ frames_to_write = []
 
 print("Processing video...")
 
+# Adjust thread workers to your own cpu limits.
 with ThreadPoolExecutor(max_workers=8) as executor:
     while True:
         ret, frame = cap.read()
@@ -79,48 +82,51 @@ with ThreadPoolExecutor(max_workers=8) as executor:
         
         if result is None:
             removed_frames += 1
-            print(f"Frame {processed_frames}: Removed matching frame.")
+            # Update the same line in terminal
+            sys.stdout.write(f"\rFrame {processed_frames}: Removed matching frame. Total removed: {removed_frames}")
+            sys.stdout.flush()
         else:
             frames_to_write.append(result)
             if len(frames_to_write) >= batch_size:
                 for buffered_frame in frames_to_write:
                     video_writer.write(buffered_frame)
                 frames_to_write = []
-            print(f"Frame {processed_frames}: Frame kept.")
+                
+                # Check the size of the current temporary file
+                if os.path.getsize(current_temp_file) >= max_temp_file_size:
+                    # Close and compress the current temporary file
+                    video_writer.release()
+
+                    # Compress the temporary file using FFMPEG
+                    compressed_temp_file = os.path.join(temp_dir, f'{file_counter:05d}_compressed.mp4')
+                    ffmpeg_command = [
+                        'ffmpeg', '-i', current_temp_file,
+                        '-b:v', '7M',  # Set video bitrate
+                        '-r', '30',    # Set frame rate to 30 fps
+                        '-preset', 'ultrafast',  # Faster preset for encoding speed
+                        '-c:v', 'libx264',
+                        '-threads', '8',  # Number of threads for encoding
+                        '-an',  # Remove audio tracks
+                        compressed_temp_file
+                    ]
+                    subprocess.run(ffmpeg_command, check=True)
+                    print(f"\rCompressed {current_temp_file} to {compressed_temp_file}.")
+
+                    # Remove the old temporary file
+                    os.remove(current_temp_file)
+                    
+                    # Increment the file counter for the next temp file
+                    file_counter += 1
+                    
+                    # Prepare a new temporary file
+                    current_temp_file = create_temp_file()
+                    video_writer = cv2.VideoWriter(current_temp_file, fourcc, fps, (frame_width, frame_height))
+
+            # Update the same line in terminal
+            sys.stdout.write(f"\rFrame {processed_frames}: Frame kept. Total removed: {removed_frames}")
+            sys.stdout.flush()
 
         processed_frames += 1
-
-# OpenCV videowriter doesn't give users access to the bitrate in the video output. (as far as I know)
-# As such the X264 files are going to be huge. Especially if the duration of your source file is large.
-# This script pauses the process when the videowriter file is 1GB in size, it compresses it using the FFMPEG settings below, then continues the frame removal process.
-# The FFMPEG videos are then merged (concatenated using the ffmpeg concat command) in sequence as one file at the end.
-
-        # Check the size of the current temporary file
-        if os.path.getsize(current_temp_file) >= max_temp_file_size:
-            # Close and compress the current temporary file
-            video_writer.release()
-            
-            # Compress the temporary file
-            compressed_temp_file = os.path.join(temp_dir, f'{file_counter:05d}_compressed.mp4')
-            ffmpeg_command = [
-                'ffmpeg', '-i', current_temp_file,
-                '-b:v', '3M',  # Set video bitrate
-                '-preset', 'ultrafast',  # Faster preset for encoding speed
-                '-threads', '8',  # Number of threads for encoding
-                compressed_temp_file
-            ]
-            subprocess.run(ffmpeg_command, check=True)
-            print(f"Compressed {current_temp_file} to {compressed_temp_file}.")
-
-            # Remove the old temporary file
-            os.remove(current_temp_file)
-            
-            # Increment the file counter for the next temp file
-            file_counter += 1
-            
-            # Prepare a new temporary file
-            current_temp_file = create_temp_file()
-            video_writer = cv2.VideoWriter(current_temp_file, fourcc, fps, (frame_width, frame_height))
 
 # Write any remaining frames in buffer
 if frames_to_write:
@@ -131,7 +137,7 @@ if frames_to_write:
 cap.release()
 video_writer.release()
 
-# Concatenate all compressed files into the final output
+# Concatenate all compressed files into the final output using FFMPEG
 concatenate_file = os.path.join(temp_dir, 'files_to_concatenate.txt')
 with open(concatenate_file, 'w') as file_list:
     for temp_file in temp_files:
