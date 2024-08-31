@@ -15,7 +15,7 @@ if not os.path.exists(temp_dir):
     os.makedirs(temp_dir)
 
 # Load the reference image in grayscale and resize it
-reference_image_path = 'offine.png'
+reference_image_path = 'reference.png'
 reference_image = cv2.imread(reference_image_path, cv2.IMREAD_GRAYSCALE)
 
 if reference_image is None:
@@ -38,8 +38,8 @@ def process_frame(frame):
     else:
         return frame  # Return the frame to be kept
 
-input_file = 'stream.webm'
-final_output_file = 'stream_trimmed.mp4'
+input_file = 'input.webm'
+final_output_file = 'input_trimmed.mp4'
 temp_files = []
 temp_file_prefix = 'temp_output_'
 temp_file_suffix = '.mp4'
