@@ -40,7 +40,7 @@ def process_frame(frame):
 
 # Set input and output videos
 input_file = 'input.mp4'
-final_output_file = 'output_trimmed.mp4'
+final_output_file = 'input_trimmed.mp4'
 temp_files = []
 temp_file_prefix = 'temp_output_'
 temp_file_suffix = '.mp4'
