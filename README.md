@@ -1,5 +1,5 @@
-Use a still image (e.g. reference.png) to compare to each frame of a video (input.mp4).
-If the png matches the current frame the video frame is deleted.
+Use a still image (e.g. reference.png) to visually compare to each frame of a video (e.g. input.mp4).
+If the png matches the current frame the video frame is deleted. If they do not match, the video frame is kept.
 
 # Load the reference image in grayscale and resize it
 reference_image_path = 'reference.png'
