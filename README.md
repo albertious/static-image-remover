@@ -28,17 +28,32 @@ This Python script is designed to process a video by removing frames that match 
 6. **Clean Up:**
    - Temporary and compressed files are deleted after the final video is created to free up disk space.
 
-## Installation
+## Installation and  Prerequisites
 
-1. **Install Required Libraries:**
-   - Ensure you have Python 3.x installed.
-   - Install the necessary Python packages using pip:
-     ```bash
-     pip install opencv-python-headless numpy
-     ```
-   - Make sure `ffmpeg` is installed and accessible from your system's PATH.
+The following Python libraries are required to run the script:
 
-2. **Set Up the Directory:**
+1. **OpenCV (`cv2`)**: This library is used for video processing and manipulation.
+   - Install with: `pip install opencv-python`
+
+2. **NumPy (`numpy`)**: This library is used for numerical operations and array handling.
+   - Install with: `pip install numpy`
+
+3. **Concurrent Futures (`concurrent.futures`)**: This library is used for parallel execution of tasks.
+   - Included in Python's standard library (Python 3.2+). No separate installation is needed.
+
+4. **Subprocess (`subprocess`)**: This library is used for running system commands.
+   - Included in Python's standard library. No separate installation is needed.
+
+5. **OS (`os`)**: This library is used for interacting with the operating system, such as file operations.
+   - Included in Python's standard library. No separate installation is needed.
+
+6. **Temporary (`tempfile`)**: This library is used for creating temporary files and directories.
+   - Included in Python's standard library. No separate installation is needed.
+
+Ensure you have Python 3.x installed on your system, as some libraries might not be compatible with Python 2.x.
+
+
+7. **Set Up the Directory:**
    - Place the reference image (`reference.png`) and the input video file (`input.mp4`) in the same directory as the script.
 
 ## Usage
