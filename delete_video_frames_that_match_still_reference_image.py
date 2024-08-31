@@ -38,7 +38,7 @@ def process_frame(frame):
     else:
         return frame  # Return the frame to be kept
 
-input_file = 'input.webm'
+input_file = 'input.mp4'
 final_output_file = 'input_trimmed.mp4'
 temp_files = []
 temp_file_prefix = 'temp_output_'
