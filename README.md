@@ -27,25 +27,25 @@ Make sure ffmpeg is installed on your system. You can download it from FFMPEG's 
 
 ## Usage
 
-    Run the Script:
+1. **Run the Script:**
 
     Execute the script using Python:
 
    ```bash
    python3 rename_the_script_file_in_a_name_you_like.py
 
-Output Files:
+2. **Output Files:**
 
     Intermediate video: temp_video.mp4 (saved in the temp_files directory)
     Final processed video: input_trimmed.mp4
 
 ## How It Works
 
-    **Setup and Reference Image Loading:**
+**Setup and Reference Image Loading:**
         Creates a directory for temporary files if it doesn't exist.
         Loads and resizes the reference image to speed up processing.
 
-    **Frame Processing:**
+**Frame Processing:**
         Each frame of the video is compared to the reference image.
         Frames that match the reference image are removed.
         Non-matching frames are written to a temporary video file in batches.
@@ -54,31 +54,31 @@ Output Files:
         Detects available GPU hardware (NVIDIA or AMD) to use hardware-accelerated video encoding.
         Uses ffmpeg to compress the temporary video file into the final output video.
         If no GPU is available, falls back to CPU-based compression.
-
-   ** Resource Cleanup:**
+        
+ **Resource Cleanup:**
         Intermediate files and resources are cleaned up after processing.
 
 ## Customization
 
-    **Reference Image Resize Factor:**
+   **Reference Image Resize Factor:**
 
     Adjust resize_factor to change the size of the reference image for template matching. A lower factor speeds up processing but may reduce accuracy.
 
-    **Compression Settings:**
+   **Compression Settings:**
 
     Modify the -b:v option in the ffmpeg_command to change the video bitrate. Adjust -r to set the desired frame rate.
 
-    **GPU Detection:**
+   **GPU Detection:**
 
     The detect_gpu function identifies the available GPU and selects the appropriate codec. You can modify this function to add support for other GPUs or codecs.
 
 ## Troubleshooting
 
-    **Reference Image Not Found:**
+   **Reference Image Not Found:**
 
     Ensure reference.png is in the same directory as the script and is a valid image file.
 
-    **FFMPEG Errors:**
+   **FFMPEG Errors:**
 
     Verify that ffmpeg is installed and accessible from your system's PATH.
 
