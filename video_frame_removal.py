@@ -7,6 +7,10 @@ import sys
 import subprocess
 import shutil
 import re
+import time  # Import time module for measuring elapsed time
+
+# Record the start time
+start_time = time.time()
 
 # Define the directory for temporary files
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,7 +62,7 @@ video_writer = cv2.VideoWriter(temp_video_file, fourcc, fps, (frame_width, frame
 
 processed_frames = 0
 removed_frames = 0
-batch_size = 30
+batch_size = 16 #depending on your hardware increasing or decreasing this will alter the speed of the process.
 frames_to_write = []
 
 print("Processing video...")
@@ -141,6 +145,7 @@ def time_to_seconds(time_str):
 ffmpeg_command = [
     'ffmpeg', '-i', temp_video_file,
     '-b:v', '6M',        # Set video bitrate to 6M
+    '-preset', 'ultrafast', #ffmpeg speed preset. default is 'medium
     '-r', '30',          # Set frame rate to 30 fps
     '-an',               # Remove audio track
     '-c:v', codec,       # Use GPU-accelerated codec if available
@@ -181,3 +186,14 @@ try:
     print(f"Temporary files and directory '{temp_dir}' have been deleted.")
 except Exception as e:
     print(f"Error deleting temporary files: {e}")
+
+# Record the end time
+end_time = time.time()
+
+# Calculate total process time
+elapsed_time = end_time - start_time
+hours, remainder = divmod(elapsed_time, 3600)
+minutes, seconds = divmod(remainder, 60)
+
+# Display the total process time
+print(f"Total process time: {int(hours)} Hours, {int(minutes)} Minutes, {int(seconds)} Seconds")
