@@ -32,7 +32,7 @@ Make sure ffmpeg is installed on your system. You can download it from FFMPEG's 
     Execute the script using Python:
 
    ```bash
-   python3 video_frame_removal.py
+   python3 video_frame_removal_[MacOS_noGPU].py
 
 2. **Output Files:**
 
