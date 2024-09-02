@@ -13,7 +13,7 @@ This Python script processes a video by removing frames that match a specified r
 1. **Install Required Python Libraries:**
    Ensure you have Python 3.x installed and then install the required libraries using `pip3`:
    ```bash
-   pip3 install opencv-python numpy
+   pip install opencv-python numpy
 
 2. **Install FFMPEG:**
 
@@ -32,7 +32,7 @@ Make sure ffmpeg is installed on your system. You can download it from FFMPEG's 
     Execute the script using Python:
 
    ```bash
-   python3 video_frame_removal_[MacOS_noGPU].py
+   python video_frame_removal_[MacOS_noGPU].py
 
 2. **Output Files:**
 
