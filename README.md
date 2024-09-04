@@ -32,7 +32,7 @@ Make sure ffmpeg is installed on your system. You can download it from FFMPEG's 
     Execute the script using Python:
 
    ```bash
-   python video_frame_removal_[MacOS].py
+   python video_frame_removal_[noCUDA_on_opencv].py
 
 2. **Output Files:**
 
