@@ -5,7 +5,7 @@ This Python script processes a video by removing frames that match a specified r
 ## Features
 
 - **Frame Removal:** Removes frames from the video that match a reference image using template matching.
-- **GPU Acceleration:** Utilizes GPU acceleration for compression if an appropriate GPU is detected.
+- **GPU Acceleration:** Utilizes GPU acceleration for the final video compression task if an appropriate GPU is detected (CUDA).
 - **Batch Processing:** Handles video frames in batches to optimize performance.
 
 ## Installation
