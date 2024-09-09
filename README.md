@@ -2,6 +2,8 @@
 
 This Python script processes a video by removing frames that match a specified reference image and then compresses the resulting video. The script supports GPU acceleration for compression if an NVIDIA or AMD GPU is available, falling back to CPU-based compression otherwise.
 
+version with opencv mathcing operation is x3 slower than cpu version. i dunno what's up with that.
+
 ## Features
 
 - **Frame Removal:** Removes frames from the video that match a reference image using template matching.
